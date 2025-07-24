@@ -11,6 +11,7 @@ public class Window extends JFrame implements Runnable {
     public PlayerController playerController;
     public AIController aiController;
     public Text leftScoreText, rightScoreText;
+    public boolean isRunning = true;
 
     public Window() {
         this.setSize(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT); // 화면 크기 설정
@@ -66,14 +67,19 @@ public class Window extends JFrame implements Runnable {
         ballRect.draw(g2);
     }
 
+    public void stop() {
+        isRunning = false;
+    }
+
     public void run() {
         double lastFrameTime = 0.0;
-        while (true) {
+        while (isRunning) {
             double time = Time.getTime();
             double deltaTime = time - lastFrameTime;
             lastFrameTime = time; // 프레임 업데이트
 
             update(deltaTime);
         }
+        this.dispose();
     }
 }
