@@ -1,23 +1,60 @@
-import javax.swing.JFrame;
-import java.awt.Graphics2D;
-import java.awt.Color;
+import javax.swing.JFrame; // 좌측 상단 코너가 (0, 0)임.
+import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class Window extends JFrame implements Runnable {
 
-    Graphics2D g2;
+    public Graphics2D g2;
+    public KL keyListener = new KL();
+    public Rect playerOne, ai, ballRect;
+    public Ball ball;
+    public PlayerController playerController;
+    public AIController aiController;
 
     public Window() {
-        this.setSize(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
-        this.setTitle(Constants.SCREEN_TITLE);
-        this.setResizable(false);
-        this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT); // 화면 크기 설정
+        this.setTitle(Constants.SCREEN_TITLE); // 제목 설정
+        this.setResizable(false); // 화면 크기 조절 불가
+        this.setVisible(true); // 화면 보이게
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 화면 닫기 기능
+        this.addKeyListener(keyListener); // 키 리스너 추가
+        Constants.TOOLBAR_HEIGHT = this.getInsets().top;
+        Constants.INSETS_BOTTOM = this.getInsets().bottom;
+
         g2 = (Graphics2D) this.getGraphics();
+
+        playerOne = new Rect(Constants.HZ_PADDING, 40, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT, Constants.PADDLE_COLOR);
+        playerController = new PlayerController(playerOne, keyListener);
+
+        ai = new Rect(Constants.SCREEN_WIDTH - Constants.PADDLE_WIDTH - Constants.HZ_PADDING, 40, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT, Constants.PADDLE_COLOR);
+
+        ballRect = new Rect(Constants.SCREEN_WIDTH/2.0, Constants.SCREEN_HEIGHT/2.0, Constants.BALL_WIDTH, Constants.BALL_HEIGHT, Constants.PADDLE_COLOR);
+        ball = new Ball(ballRect, playerOne, ai);
+
+        aiController = new AIController(new PlayerController(ai), ballRect);
+
     }
 
     public void update(double delta) {
+        // 프레임 부드럽게
+        Image dbImage = createImage(getWidth(), getHeight());
+        Graphics dbg = dbImage.getGraphics();
+        this.draw(dbg);
+        g2.drawImage(dbImage, 0, 0, this);
+
+        playerController.update(delta);
+        aiController.update(delta);
+        ball.update(delta);
+    }
+
+    public void draw(Graphics g) {
+        Graphics2D g2 = (Graphics2D)g;
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+
+        playerOne.draw(g2);
+        ai.draw(g2);
+        ballRect.draw(g2);
     }
 
     public void run() {
@@ -28,12 +65,6 @@ public class Window extends JFrame implements Runnable {
             lastFrameTime = time; // 프레임 업데이트
 
             update(deltaTime);
-
-            try {
-                Thread.sleep(30);
-            } catch (Exception e) {
-
-            }
         }
     }
 }
