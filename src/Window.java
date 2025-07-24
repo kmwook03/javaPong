@@ -10,6 +10,7 @@ public class Window extends JFrame implements Runnable {
     public Ball ball;
     public PlayerController playerController;
     public AIController aiController;
+    public Text leftScoreText, rightScoreText;
 
     public Window() {
         this.setSize(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT); // 화면 크기 설정
@@ -29,10 +30,15 @@ public class Window extends JFrame implements Runnable {
         ai = new Rect(Constants.SCREEN_WIDTH - Constants.PADDLE_WIDTH - Constants.HZ_PADDING, 40, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT, Constants.PADDLE_COLOR);
 
         ballRect = new Rect(Constants.SCREEN_WIDTH/2.0, Constants.SCREEN_HEIGHT/2.0, Constants.BALL_WIDTH, Constants.BALL_HEIGHT, Constants.PADDLE_COLOR);
-        ball = new Ball(ballRect, playerOne, ai);
 
         aiController = new AIController(new PlayerController(ai), ballRect);
 
+
+        leftScoreText = new Text(0, new Font("Times New Roman", Font.PLAIN, Constants.TEXT_SIZE), Constants.TEXT_X_POS, Constants.TEXT_Y_POS);
+        rightScoreText = new Text(0, new Font("Times New Roman", Font.PLAIN, Constants.TEXT_SIZE),
+                Constants.SCREEN_WIDTH - Constants.TEXT_X_POS - Constants.TEXT_SIZE, Constants.TEXT_Y_POS);
+
+        ball = new Ball(ballRect, playerOne, ai, leftScoreText, rightScoreText);
     }
 
     public void update(double delta) {
@@ -51,6 +57,9 @@ public class Window extends JFrame implements Runnable {
         Graphics2D g2 = (Graphics2D)g;
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT);
+
+        leftScoreText.draw(g2);
+        rightScoreText.draw(g2);
 
         playerOne.draw(g2);
         ai.draw(g2);
