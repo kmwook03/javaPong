@@ -19,9 +19,14 @@ public class MainMenu extends JFrame implements Runnable {
         this.addKeyListener(keyListener); // 키 리스너 추가
         this.addMouseListener(mouseListener); // 마우스 리스너 추가
         this.addMouseMotionListener(mouseListener); // 마우스 모션 리스너 추가
-        this.startGame = new Text("Start Game", new Font("Times New Roman", Font.PLAIN, 40), Constants.SCREEN_WIDTH / 2.0 - 140.0, Constants.SCREEN_HEIGHT / 2.0, Color.WHITE);
-        this.exitGame = new Text("Exit", new Font("Times New Roman", Font.PLAIN, 40), Constants.SCREEN_WIDTH / 2.0 - 80.0, Constants.SCREEN_HEIGHT / 2.0 + 60, Color.WHITE);
-        this.pong = new Text("javaPong", new Font("Times New Roman", Font.PLAIN, 100), Constants.SCREEN_WIDTH / 2.0 - 200, Constants.SCREEN_HEIGHT / 2.0 - 100, Color.WHITE);
+
+        Font titleFont = new Font("Times New Roman", Font.PLAIN, Constants.MAIN_MENU_TITLE_SIZE);
+        Font menuFont = new Font("Ariel", Font.PLAIN, Constants.MAIN_MENU_TEXT_SIZE);
+
+        this.pong = new Text("javaPong", titleFont, Constants.MAIN_MENU_TITLE_Y, Color.WHITE);
+        this.startGame = new Text("Start Game", menuFont, Constants.MAIN_MENU_START_Y, Color.WHITE);
+        this.exitGame = new Text("Exit", menuFont, Constants.MAIN_MENU_EXIT_Y, Color.WHITE);
+
 
         g2 = (Graphics2D)this.getGraphics();
     }
@@ -32,23 +37,23 @@ public class MainMenu extends JFrame implements Runnable {
         Graphics dbg = dbImage.getGraphics();
         this.draw(dbg);
         g2.drawImage(dbImage, 0, 0, this);
-        
+
         if (mouseListener.getMouseX() > startGame.x - 50 && mouseListener.getMouseX() < startGame.x + startGame.width &&
-        mouseListener.getMouseY() > startGame.y - 50 && mouseListener.getMouseY() < startGame.y + startGame.height) {
+        mouseListener.getMouseY() > startGame.y - 50 && mouseListener.getMouseY() < startGame.y + startGame.height - 10) {
             startGame.color = new Color(158, 158, 158); // 나중에 크기도 커지는 거로 바꿀 예정
 
             if (mouseListener.isMousePressed()) {
-                Main.changeState(1);
+                Main.changeState(Main.GameState.COUNT_DOWN);
             }
         } else {
             startGame.color = Color.WHITE;
         }
 
-        if (mouseListener.getMouseX() > exitGame.x - 50 && mouseListener.getMouseX() < exitGame.x + exitGame.width &&
-                mouseListener.getMouseY() > exitGame.y - 20 && mouseListener.getMouseY() < exitGame.y + exitGame.height) {
+        if (mouseListener.getMouseX() > exitGame.x - 100 && mouseListener.getMouseX() < exitGame.x + exitGame.width + 100 &&
+                mouseListener.getMouseY() > exitGame.y - 30 && mouseListener.getMouseY() < exitGame.y + exitGame.height) {
             exitGame.color = new Color(158, 158, 158); // 나중에 크기도 커지는 거로 바꿀 예정
             if (mouseListener.isMousePressed()) {
-                Main.changeState(2);
+                Main.changeState(Main.GameState.EXIT);
             }
         } else {
             exitGame.color = Color.WHITE;

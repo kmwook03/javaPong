@@ -1,29 +1,45 @@
 public class Main {
-    public static int state = 0;
+    public static GameState state = GameState.MAIN_MENU;
     public static Thread mainThread;
-    public static MainMenu menu;
+    public static MainMenu mainMenu;
     public static Window window;
 
+    public enum GameState {
+        MAIN_MENU,
+        COUNT_DOWN,
+        PLAYING,
+        GAME_OVER,
+        EXIT
+    }
+
     public static void main(String[] args) {
-        menu = new MainMenu();
-        mainThread = new Thread(menu);
+        mainMenu = new MainMenu();
+        mainThread = new Thread(mainMenu);
         mainThread.start();
     }
 
-    public static void changeState(int newState) {
-        if (newState == 1 && state == 0) {
-            menu.stop();
-            state = newState;
-            window = new Window();
-            mainThread = new Thread(window);
-            mainThread.start();
-        } else if (newState == 0 && state == 1) {
-            window.stop();
-            state = newState;
-            main(new String[0]);
-        } else if (newState == 2) {
-            if (window != null) window.stop();
-            if (menu != null) menu.stop();
+    public static void changeState(GameState newState) {
+        state = newState;
+
+        switch (newState) {
+            case MAIN_MENU -> {
+                mainMenu = new MainMenu();
+                if (window != null) window.stop();
+                new Thread(mainMenu).start();
+            }
+            case COUNT_DOWN, PLAYING -> {
+                if (mainMenu != null) mainMenu.stop();
+                window = new Window();
+                new Thread(window).start();
+            }
+            case GAME_OVER -> {
+
+            }
+            case EXIT -> {
+                if (mainMenu != null) mainMenu.stop();
+                if (window != null) window.stop();
+                System.exit(0);
+            }
         }
     }
 }

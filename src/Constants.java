@@ -25,8 +25,15 @@ public class Constants {
     public static double INSETS_BOTTOM;
 
     /* -- 텍스트 관련 상수 -- */
-    public static final int TEXT_Y_POS = 80;
-    public static final int TEXT_X_POS = 30;
+    public static final int MAIN_MENU_TEXT_SIZE = 40;
+    public static final int MAIN_MENU_TITLE_SIZE = 100;
+    public static final double MAIN_MENU_Y_CENTER = SCREEN_HEIGHT / 2.0;
+    public static final double MAIN_MENU_TITLE_Y = MAIN_MENU_Y_CENTER - 120;
+    public static final double MAIN_MENU_START_Y = MAIN_MENU_Y_CENTER;
+    public static final double MAIN_MENU_EXIT_Y = MAIN_MENU_Y_CENTER + 80;
+
+    public static final int TEXT_Y_POS = 100;
+    public static final int TEXT_X_POS = 80;
     public static final int TEXT_SIZE = 40;
     public static final int WIN_SCORE = 11;
 }

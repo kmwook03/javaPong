@@ -12,6 +12,7 @@ public class Window extends JFrame implements Runnable {
     public AIController aiController;
     public Text leftScoreText, rightScoreText;
     public boolean isRunning = true;
+    public GameManager gameManager;
 
     public Window() {
         this.setSize(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT); // 화면 크기 설정
@@ -39,7 +40,8 @@ public class Window extends JFrame implements Runnable {
         rightScoreText = new Text(0, new Font("Times New Roman", Font.PLAIN, Constants.TEXT_SIZE),
                 Constants.SCREEN_WIDTH - Constants.TEXT_X_POS - Constants.TEXT_SIZE, Constants.TEXT_Y_POS);
 
-        ball = new Ball(ballRect, playerOne, ai, leftScoreText, rightScoreText);
+        ball = new Ball(ballRect, playerOne, ai);
+        gameManager = new GameManager(ball, playerOne, ai, leftScoreText, rightScoreText);
     }
 
     public void update(double delta) {
@@ -49,9 +51,13 @@ public class Window extends JFrame implements Runnable {
         this.draw(dbg);
         g2.drawImage(dbImage, 0, 0, this);
 
-        playerController.update(delta);
-        aiController.update(delta);
-        ball.update(delta);
+        gameManager.update(delta);
+
+        if (Main.state == Main.GameState.PLAYING) {
+            playerController.update(delta);
+            aiController.update(delta);
+            ball.update(delta);
+        }
     }
 
     public void draw(Graphics g) {
@@ -64,6 +70,13 @@ public class Window extends JFrame implements Runnable {
 
         playerOne.draw(g2);
         ai.draw(g2);
+
+        if (gameManager.isCounting) {
+            String countdown = gameManager.getCountDownText();
+            Font font = new Font("Times New Roman", Font.BOLD, 100);
+            Text text = new Text(countdown, font, Constants.SCREEN_HEIGHT/2.0, Color.WHITE);
+            text.draw(g2);
+        }
         ballRect.draw(g2);
     }
 
