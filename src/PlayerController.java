@@ -23,6 +23,10 @@ public class PlayerController {
         }
     }
 
+    public boolean isTryingToSmash() {
+        return keyListener.isKeyPressed(KeyEvent.VK_Z);
+    }
+
     public void moveUp(double delta) {
         if (rect.y - Constants.PADDLE_SPEED * delta > Constants.TOOLBAR_HEIGHT) {
             this.rect.y -= Constants.PADDLE_SPEED * delta;

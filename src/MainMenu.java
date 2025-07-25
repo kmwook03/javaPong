@@ -38,6 +38,7 @@ public class MainMenu extends JFrame implements Runnable {
         this.draw(dbg);
         g2.drawImage(dbImage, 0, 0, this);
 
+        // 마우스 조작
         if (mouseListener.getMouseX() > startGame.x - 50 && mouseListener.getMouseX() < startGame.x + startGame.width &&
         mouseListener.getMouseY() > startGame.y - 50 && mouseListener.getMouseY() < startGame.y + startGame.height - 10) {
             startGame.color = new Color(158, 158, 158); // 나중에 크기도 커지는 거로 바꿀 예정
@@ -57,6 +58,15 @@ public class MainMenu extends JFrame implements Runnable {
             }
         } else {
             exitGame.color = Color.WHITE;
+        }
+
+        // 키보드 조작
+        if (keyListener.isKeyPressed(KeyEvent.VK_ENTER)) {
+            Main.changeState(Main.GameState.COUNT_DOWN);
+        }
+
+        if (keyListener.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+            Main.changeState(Main.GameState.EXIT);
         }
     }
 

@@ -1,13 +1,15 @@
+import java.awt.event.KeyEvent;
 import java.util.Random;
 
 public class Ball {
     public Rect rect;
     public Rect leftPaddle, rightPaddle;
-
     private Random rand = new Random();
     // velocity x, y
     private double vy;
     private double vx;
+
+    public double ballSpeed = Constants.BALL_SPEED;
 
     public Ball(Rect rect, Rect leftPaddle, Rect rightPaddle) {
         this.rect = rect;
@@ -26,18 +28,24 @@ public class Ball {
         this.vy = Constants.BALL_SPEED * Math.sin(randAngle);
     }
     private double calculateNewVelocityAngle(Rect paddle) {
-        double relativeIntersectY = (paddle.y + (paddle.height/2.0)) - (this.rect.y + (this.rect.y / 2.0));
+        double relativeIntersectY = (paddle.y + (paddle.height / 2.0)) - (this.rect.y + (this.rect.height / 2.0));
         double normalIntersectY = relativeIntersectY / (paddle.height/2.0);
         double theta = normalIntersectY * Constants.MAX_ANGLE;
 
         return Math.toRadians(theta);
     }
 
-    private double[] calculateNewVelocity(Rect paddle) {
+    private double[] calculateNewVelocity(Rect paddle, PlayerController playerController) {
         double theta = calculateNewVelocityAngle(paddle);
         double newSign = -1.0 * Math.signum(this.vx);
-        double newVx = newSign * Math.abs((Math.cos(theta)) * Constants.BALL_SPEED);
-        double newVy = (-Math.sin(theta)) * Constants.BALL_SPEED;
+        if (playerController.isTryingToSmash()) {
+            System.out.println("Smash!");
+            ballSpeed += Constants.SMASHED_SPEED;
+            System.out.println(ballSpeed);
+        }
+        double newVx = newSign * Math.abs((Math.cos(theta)) * (ballSpeed));
+        double newVy = (-Math.sin(theta)) * ballSpeed;
+
 
         return new double[]{newVx, newVy};
     }
@@ -49,17 +57,19 @@ public class Ball {
         return xCondition && yCondition;
     }
 
-    public void update(double delta) {
+    public void update(double delta, PlayerController playerController) {
         // x축 방향 확인
         if (vx < 0) {
             if (collisionWith(this.leftPaddle)) {
-                double[] newVelocity = calculateNewVelocity(leftPaddle);
+                ballSpeed -= 5;
+                double[] newVelocity = calculateNewVelocity(leftPaddle, playerController);
                 this.vx = newVelocity[0];
                 this.vy = newVelocity[1];
             }
         } else if (vx > 0) {
             if (collisionWith(this.rightPaddle)) {
-                double[] newVelocity = calculateNewVelocity(rightPaddle);
+                ballSpeed -= 5;
+                double[] newVelocity = calculateNewVelocity(rightPaddle, playerController);
                 this.vx = newVelocity[0];
                 this.vy = newVelocity[1];
             }
@@ -69,11 +79,13 @@ public class Ball {
         if (vy > 0) {
             if (this.rect.y + this.rect.height > Constants.SCREEN_HEIGHT) {
                 // y축 방향 전환
+                ballSpeed -= 5;
                 this.vy *= -1;
             }
         } else if (vy < 0) {
             if (this.rect.y < Constants.TOOLBAR_HEIGHT) {
                 // y축 방향 전환
+                ballSpeed -= 5;
                 this.vy *= -1;
             }
         }

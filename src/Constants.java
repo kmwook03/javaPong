@@ -17,6 +17,7 @@ public class Constants {
 
     public static final double PADDLE_SPEED = 350;
     public static final double BALL_SPEED = 400;
+    public static final double SMASHED_SPEED = 100;
     public static final double MAX_ANGLE = 45;
     // 수직 패딩
     public static final double HZ_PADDING = 40;

@@ -4,6 +4,7 @@ public class GameManager {
     private Text leftScoreText, rightScoreText;
     private double countDownTimer = 3.5;
     public boolean isCounting = true;
+    public KL keyListener = new KL();
 
     public GameManager(Ball ball, Rect leftPaddle, Rect rightPaddle, Text leftScoreText, Text rightScoreText) {
         this.ball = ball;
