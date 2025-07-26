@@ -61,14 +61,12 @@ public class Ball {
         // x축 방향 확인
         if (vx < 0) {
             if (collisionWith(this.leftPaddle)) {
-                ballSpeed -= 5;
                 double[] newVelocity = calculateNewVelocity(leftPaddle, playerController);
                 this.vx = newVelocity[0];
                 this.vy = newVelocity[1];
             }
         } else if (vx > 0) {
             if (collisionWith(this.rightPaddle)) {
-                ballSpeed -= 5;
                 double[] newVelocity = calculateNewVelocity(rightPaddle, playerController);
                 this.vx = newVelocity[0];
                 this.vy = newVelocity[1];

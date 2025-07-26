@@ -29,11 +29,11 @@ public class Window extends JFrame implements Runnable {
         playerOne = new Rect(Constants.HZ_PADDING, Constants.SCREEN_HEIGHT / 2.0, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT, Constants.PADDLE_COLOR);
         playerController = new PlayerController(playerOne, keyListener);
 
-        ai = new Rect(Constants.SCREEN_WIDTH - Constants.PADDLE_WIDTH - Constants.HZ_PADDING, Constants.SCREEN_HEIGHT / 2.0, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT, Constants.PADDLE_COLOR);
 
         ballRect = new Rect(Constants.SCREEN_WIDTH/2.0, Constants.SCREEN_HEIGHT/2.0, Constants.BALL_WIDTH, Constants.BALL_HEIGHT, Constants.PADDLE_COLOR);
 
-        aiController = new AIController(new PlayerController(ai), ballRect);
+        ai = new Rect(Constants.SCREEN_WIDTH - Constants.PADDLE_WIDTH - Constants.HZ_PADDING, Constants.SCREEN_HEIGHT / 2.0, Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT, Constants.PADDLE_COLOR);
+        aiController = new AIController(ai, ballRect);
 
 
         leftScoreText = new Text(0, new Font("Times New Roman", Font.PLAIN, Constants.TEXT_SIZE), Constants.TEXT_X_POS, Constants.TEXT_Y_POS);
@@ -41,6 +41,7 @@ public class Window extends JFrame implements Runnable {
                 Constants.SCREEN_WIDTH - Constants.TEXT_X_POS - Constants.TEXT_SIZE, Constants.TEXT_Y_POS);
 
         ball = new Ball(ballRect, playerOne, ai);
+
         gameManager = new GameManager(ball, playerOne, ai, leftScoreText, rightScoreText);
     }
 
@@ -90,6 +91,8 @@ public class Window extends JFrame implements Runnable {
             double time = Time.getTime();
             double deltaTime = time - lastFrameTime;
             lastFrameTime = time; // 프레임 업데이트
+
+            keyListener.update();
 
             update(deltaTime);
         }
