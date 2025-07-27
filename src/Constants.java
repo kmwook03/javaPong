@@ -16,7 +16,7 @@ public class Constants {
     public static final double BALL_HEIGHT = 10;
 
     public static final double PADDLE_SPEED = 350;
-    public static final double DASH_DISTANCE = 60;
+    public static final double DASH_SPEED = 900;
     public static final double BALL_SPEED = 400;
     public static final double SMASHED_SPEED = 100;
     public static final double MAX_ANGLE = 45;
