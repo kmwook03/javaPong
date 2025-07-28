@@ -1,6 +1,5 @@
 import javax.swing.JFrame; // 좌측 상단 코너가 (0, 0)임.
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 public class Window extends JFrame implements Runnable {
 
