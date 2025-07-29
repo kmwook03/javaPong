@@ -24,8 +24,7 @@ public class Constants {
     // 수직 패딩
     public static final double HZ_PADDING = 40;
 
-    public static double TOOLBAR_HEIGHT;
-    public static double INSETS_BOTTOM;
+    
 
     /* -- 텍스트 관련 상수 -- */
     public static final int MAIN_MENU_TEXT_SIZE = 40;
