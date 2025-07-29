@@ -1,20 +1,21 @@
-import java.awt.event.KeyEvent;
 import java.util.Random;
 
 public class Ball {
     public Rect rect;
     public Rect leftPaddle, rightPaddle;
-    private Random rand = new Random();
-    // velocity x, y
+    private final Random rand = new Random();
+    private final GameManager gameManager; // GameManager 필드 추가
+
     private double vy;
     private double vx;
 
     public double ballSpeed = Constants.BALL_SPEED;
 
-    public Ball(Rect rect, Rect leftPaddle, Rect rightPaddle) {
+    public Ball(Rect rect, Rect leftPaddle, Rect rightPaddle, GameManager gameManager) { // GameManager 매개변수 추가
         this.rect = rect;
         this.leftPaddle = leftPaddle;
         this.rightPaddle = rightPaddle;
+        this.gameManager = gameManager; // GameManager 초기화
         resetVelocity();
     }
 
@@ -58,6 +59,8 @@ public class Ball {
     }
 
     public void update(double delta, PlayerController playerController) {
+        if (gameManager.isCounting()) return; // 카운트다운 중에는 공 움직임 처리 안 함
+
         // x축 방향 확인
         if (vx < 0) {
             if (collisionWith(this.leftPaddle)) {
@@ -81,7 +84,7 @@ public class Ball {
                 this.vy *= -1;
             }
         } else if (vy < 0) {
-            if (this.rect.y < Constants.TOOLBAR_HEIGHT) {
+            if (this.rect.y < 0) {
                 // y축 방향 전환
                 ballSpeed -= 5;
                 this.vy *= -1;

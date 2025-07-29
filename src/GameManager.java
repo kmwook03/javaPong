@@ -1,17 +1,17 @@
 public class GameManager {
-    private Ball ball;
-    private Rect leftPaddle, rightPaddle;
-    private Text leftScoreText, rightScoreText;
-    private double countDownTimer = 3.5;
-    public boolean isCounting = true;
-    public KL keyListener = new KL();
+    private Ball ball; // 이후 주입될 예정
+    private final Text leftScoreText, rightScoreText;
+    private double countDownTimer = 3.0;
+    private boolean isCounting = true;
+    private boolean isGameOver = false;
 
-    public GameManager(Ball ball, Rect leftPaddle, Rect rightPaddle, Text leftScoreText, Text rightScoreText) {
-        this.ball = ball;
-        this.leftPaddle = leftPaddle;
-        this.rightPaddle = rightPaddle;
+    public GameManager(Text leftScoreText, Text rightScoreText) {
         this.leftScoreText = leftScoreText;
         this.rightScoreText = rightScoreText;
+    }
+
+    public void setBall(Ball ball) {
+        this.ball = ball;
     }
 
     public void update(double delta) {
@@ -20,7 +20,6 @@ public class GameManager {
             countDownTimer -= delta;
             if (countDownTimer <= -0.5) {
                 isCounting = false;
-                Main.state = Main.GameState.PLAYING;
             }
             return;
         }
@@ -33,6 +32,8 @@ public class GameManager {
         this.ball.rect.x = Constants.SCREEN_WIDTH / 2.0;
         this.ball.rect.y = Constants.SCREEN_HEIGHT / 2.0;
         ball.resetVelocity();
+        isCounting = true;
+        countDownTimer = 3.0;
     }
 
     private void handleScore(Text scoreText, String winnerName) {
@@ -41,10 +42,18 @@ public class GameManager {
 
         if (currentScore >= Constants.WIN_SCORE) {
             System.out.println(winnerName + " win");
-            Main.changeState(Main.GameState.MAIN_MENU);
+            isGameOver = true;
         } else {
             resetBall();
         }
+    }
+
+    public boolean isCounting() {
+        return isCounting;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
     }
 
     public String getCountDownText() {

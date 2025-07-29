@@ -42,6 +42,7 @@ public class Text {
 
             this.x = (Constants.SCREEN_WIDTH / 2.0) - (this.width / 2.0);
         }
+
         g2.drawString(this.text, (float)this.x, (float)this.y);
     }
 }
