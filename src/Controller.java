@@ -1,3 +1,4 @@
 public interface Controller {
-    public abstract void update(double delta);
+    void update(double delta);
+    void reset();
 }

@@ -38,13 +38,14 @@ public class GamePanel extends JPanel implements Runnable, IPanel {
                 Constants.SCREEN_WIDTH - Constants.TEXT_X_POS - Constants.TEXT_SIZE, Constants.TEXT_Y_POS);
 
         // 게임매니저 객체 생성
-        gameManager = new GameManager(leftScoreText, rightScoreText); // GameManager 먼저 생성
+        gameManager = new GameManager(leftScoreText, rightScoreText, onGameOverCallback); // GameManager 먼저 생성
         ball = new Ball(ballRect, playerOne, ai, gameManager); // Ball 생성 시 gameManager 전달
         gameManager.setBall(ball); // GameManager에 Ball 설정
 
         // 컨트롤러 객체 생성
         playerController = new PlayerController(playerOne, keyListener, gameManager);
         aiController = new AIController(ai, ballRect, gameManager);
+        gameManager.setController(playerController, aiController);
     }
 
     @Override
@@ -92,12 +93,6 @@ public class GamePanel extends JPanel implements Runnable, IPanel {
         playerController.update(delta);
         aiController.update(delta);
         ball.update(delta, playerController);
-
-        if (gameManager.isGameOver()) {
-            if (onGameOver != null) {
-                SwingUtilities.invokeLater(onGameOver);
-            }
-        }
     }
 
     @Override
