@@ -1,13 +1,26 @@
-public class GameManager {
-    private Ball ball; // 이후 주입될 예정
-    private final Text leftScoreText, rightScoreText;
-    private double countDownTimer = 3.0;
-    private boolean isCounting = true;
-    private boolean isGameOver = false;
+import javax.swing.*;
 
-    public GameManager(Text leftScoreText, Text rightScoreText) {
+public class GameManager {
+    private PlayerController playerController;
+    private AIController aiController;
+    private final Text leftScoreText, rightScoreText;
+    private Ball ball; // 이후 주입될 예정
+    private boolean isCounting;
+    private double countDownTimer;
+    private String countDownText;
+    private boolean isGameOver;
+    private final Runnable onGameOver;
+
+    public GameManager(Text leftScoreText, Text rightScoreText, Runnable onGameOver) {
         this.leftScoreText = leftScoreText;
         this.rightScoreText = rightScoreText;
+        this.onGameOver = onGameOver;
+        resetGame();
+    }
+
+    public void setController(PlayerController playerController, AIController aiController) {
+        this.playerController = playerController;
+        this.aiController = aiController;
     }
 
     public void setBall(Ball ball) {
@@ -15,25 +28,58 @@ public class GameManager {
     }
 
     public void update(double delta) {
+        if (isGameOver) return;
         // 시작 전 카운트
         if (isCounting) {
+            resetController();
+            resetBall();
             countDownTimer -= delta;
-            if (countDownTimer <= -0.5) {
+            int seconds = (int) Math.ceil(countDownTimer);
+            countDownText = String.valueOf(seconds);
+            if (countDownTimer <= 0) {
                 isCounting = false;
             }
-            return;
         }
 
-        if (ball.rect.x < 0) handleScore(rightScoreText, "Right");
-        else if (ball.rect.x + ball.rect.width > Constants.SCREEN_WIDTH) handleScore(leftScoreText, "Left");
+        if (ball.rect.x < 0) {
+            handleScore(rightScoreText, "Right");
+            startCountDown();
+        }
+        else if (ball.rect.x + ball.rect.width > Constants.SCREEN_WIDTH) {
+            handleScore(leftScoreText, "Left");
+            startCountDown();
+        }
+    }
+
+    private void startCountDown() {
+        isCounting = true;
+        countDownTimer = 3.0;
+        countDownText = "3";
     }
 
     private void resetBall() {
-        this.ball.rect.x = Constants.SCREEN_WIDTH / 2.0;
-        this.ball.rect.y = Constants.SCREEN_HEIGHT / 2.0;
-        ball.resetVelocity();
-        isCounting = true;
-        countDownTimer = 3.0;
+        if (ball != null) {
+            ball.rect.x = Constants.SCREEN_WIDTH / 2.0;
+            ball.rect.y = Constants.SCREEN_HEIGHT / 2.0;
+            ball.resetVelocity();
+        }
+    }
+
+    private void resetController() {
+        if (playerController != null) {
+            playerController.reset();
+        }
+        if (aiController != null) {
+            aiController.reset();
+        }
+    }
+
+    public void resetGame() {
+        leftScoreText.text = "0";
+        rightScoreText.text = "0";
+        isGameOver = false;
+
+        startCountDown();
     }
 
     private void handleScore(Text scoreText, String winnerName) {
@@ -43,6 +89,9 @@ public class GameManager {
         if (currentScore >= Constants.WIN_SCORE) {
             System.out.println(winnerName + " win");
             isGameOver = true;
+            if (onGameOver != null) {
+                SwingUtilities.invokeLater(onGameOver);
+            }
         } else {
             resetBall();
         }
@@ -52,15 +101,7 @@ public class GameManager {
         return isCounting;
     }
 
-    public boolean isGameOver() {
-        return isGameOver;
-    }
-
     public String getCountDownText() {
-        int seconds = (int)Math.ceil(countDownTimer);
-        if (seconds > 0) {
-            return "" + seconds;
-        }
-        return "Start";
+        return countDownText;
     }
 }

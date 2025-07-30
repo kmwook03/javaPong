@@ -10,6 +10,11 @@ public class AIController implements Controller {
     }
 
     @Override
+    public void reset() {
+        this.rect.y = Constants.SCREEN_HEIGHT / 2.0;
+    }
+
+    @Override
     public void update(double delta) {
         if (gameManager.isCounting()) return;
         if (ball.y < this.rect.y) {

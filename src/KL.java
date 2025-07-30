@@ -24,4 +24,8 @@ public class KL implements KeyListener {
     public boolean isKeyPressed(int keyCode) {
         return currentlyPressedKeys.contains(keyCode);
     }
+
+    public void reset() {
+        currentlyPressedKeys.clear();
+    }
 }

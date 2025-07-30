@@ -6,7 +6,6 @@ public class PlayerController implements Controller {
     public KL keyListener;
     private final GameManager gameManager;
 
-    private int dashCount = 3;
     private boolean isDashing = false;
     private double dashTime = 0.0;
     private double dashDirection = 0.0;
@@ -18,11 +17,17 @@ public class PlayerController implements Controller {
     }
 
     @Override
+    public void reset() {
+        this.rect.y = Constants.SCREEN_HEIGHT / 2.0;
+        this.isDashing = false;
+    }
+
+    @Override
     public void update(double delta) {
         if (gameManager.isCounting()) return;
         if (keyListener != null) { // Player 조작
             // 이동 로직
-            if (keyListener.isKeyPressed(KeyEvent.VK_X) && dashCount > 0 && !isDashing) {
+            if (keyListener.isKeyPressed(KeyEvent.VK_X) && !isDashing) {
                 isDashing = true;
                 dashTime = 0.2; // 대시 지속 시간 (초)
                 if (keyListener.isKeyPressed(KeyEvent.VK_UP)) {
@@ -30,7 +35,6 @@ public class PlayerController implements Controller {
                 } else {
                     dashDirection = 1.0;
                 }
-                dashCount--;
             }
 
             if (isDashing) {
