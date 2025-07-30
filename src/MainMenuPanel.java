@@ -1,13 +1,11 @@
 import javax.swing.*; // 좌측 상단 코너가 (0, 0)임.
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Objects;
 
-public class MainMenuPanel extends JPanel implements Runnable {
+public class MainMenuPanel extends JPanel implements Runnable, IPanel {
 
-    private final CardLayout cardLayout;
-    private final JPanel mainPanel;
-
-    private final GamePanel gamePanel; // GamePanel 필드 추가
+    private final Runnable onStartGame;
 
     public Text startGame, exitGame, pong;
 
@@ -15,79 +13,102 @@ public class MainMenuPanel extends JPanel implements Runnable {
     public ML mouseListener = new ML();
 
     private Thread menuThread;
-    private boolean isRunning = true;
 
     public ML getMouseListener() {
         return mouseListener;
     }
 
-    // 생성자 수정: gamePanel 매개변수 추가
-    public MainMenuPanel(CardLayout cardLayout, JPanel mainPanel, GamePanel gamePanel) {
-        this.cardLayout = cardLayout;
-        this.mainPanel = mainPanel;
-        this.gamePanel = gamePanel; // gamePanel 초기화
+    public MainMenuPanel(Runnable onStartGameCallback) {
+        this.onStartGame = onStartGameCallback;
 
+        // 화면 설정
         this.setOpaque(true);
         this.setBackground(Color.BLACK);
         this.setLayout(null); // Use absolute positioning
         this.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
+        this.setFocusable(true);
 
+        // UI 텍스트
         Font titleFont = new Font("Times New Roman", Font.PLAIN, Constants.MAIN_MENU_TITLE_SIZE);
         Font menuFont = new Font("Ariel", Font.PLAIN, Constants.MAIN_MENU_TEXT_SIZE);
-
         this.pong = new Text("javaPong", titleFont, Constants.MAIN_MENU_TITLE_Y, Color.WHITE);
         this.startGame = new Text("Start Game", menuFont, Constants.MAIN_MENU_START_Y, Color.WHITE);
         this.exitGame = new Text("Exit", menuFont, Constants.MAIN_MENU_EXIT_Y, Color.WHITE);
 
+        // 이벤트리스너
         this.addKeyListener(keyListener);
         this.addMouseListener(mouseListener);
         this.addMouseMotionListener(mouseListener);
-
-        this.setFocusable(true);
     }
 
-    public void startMenu() {
-        isRunning = true;
-        mouseListener.reset(); // 마우스 리스너 상태 초기화
-        menuThread = new Thread(this);
-        menuThread.start();
+    @Override
+    public void onShow() {
+        mouseListener.reset();
+        if (menuThread == null || !menuThread.isAlive()) {
+            menuThread = new Thread(this);
+            menuThread.start();
+        }
     }
 
-    public void stopMenu() {
-        isRunning = false;
-        if (menuThread != null) {
+    @Override
+    public void onHide() {
+        if (menuThread != null && menuThread.isAlive()) {
             menuThread.interrupt();
         }
     }
 
     @Override
+    public JPanel getPanel() {
+        return this;
+    }
+
+    @Override
     public void run() {
         double lastFrameTime = Time.getTime();
-        while (isRunning && !Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             double time = Time.getTime();
             double deltaTime = time - lastFrameTime;
             lastFrameTime = time;
 
             update(deltaTime);
             repaint();
-
         }
     }
 
     private void update(double delta) {
-
         if (mouseListener.isMousePressed()) {
-            if (isWithinBounds(startGame)) {
+            boolean clickedStart = isWithinBounds(startGame);
+            boolean clickedExit = isWithinBounds(exitGame);
+
+            mouseListener.isPressed = false;
+
+            if (clickedStart) {
                 System.out.println("Start Game Clicked!");
-                cardLayout.show(mainPanel, "GamePanel");
-                gamePanel.startGame(); // 직접 startGame() 호출
-                stopMenu();
-            } else if (isWithinBounds(exitGame)) {
+                if (onStartGame != null) {
+                    onStartGame.run();
+                }
+            } else if (clickedExit) {
                 System.out.println("Exit Clicked!");
                 System.exit(0);
             }
         }
 
+//        if (keyListener.isKeyPressed(KeyEvent.VK_ENTER)) {
+//            System.out.println("Start Game Clicked!");
+//            if (onStartGame != null) {
+//                onStartGame.run();
+//            }
+//        }
+//
+//        if (keyListener.isKeyPressed(KeyEvent.VK_ESCAPE)) {
+//            System.out.println("Exit Clicked!");
+//            System.exit(0);
+//        }
+
+        updateHoverEffect();
+    }
+
+    private void updateHoverEffect() {
         Color hoverColor = new Color(158, 158, 158);
         Color originalColor = Color.WHITE;
 
@@ -112,8 +133,11 @@ public class MainMenuPanel extends JPanel implements Runnable {
         }
     }
 
+    // 위험한 코드
+    // getFontMetrics는 패널에 화면 추가 후 호출하는 것이 더 안전
+    // 일단 작동하니 수정은 보류
     private boolean isWithinBounds(Text text) {
-        FontMetrics fm = mainPanel.getFontMetrics(text.font);
+        FontMetrics fm = getFontMetrics(text.font);
         double textWidth = fm.stringWidth(text.text);
         double textX = (Constants.SCREEN_WIDTH / 2.0) - (textWidth / 2.0);
         double textHeight = fm.getHeight();

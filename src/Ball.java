@@ -20,6 +20,7 @@ public class Ball {
     }
 
     public void resetVelocity() {
+        ballSpeed = Constants.BALL_SPEED; // 공 속력도 초기화
         // 공 방향 랜덤
         double randDirection = rand.nextBoolean() ? -1.0 : 1.0;
         // 공 각도 랜덤

@@ -1,13 +1,15 @@
 public class GameManager {
-    private Ball ball; // 이후 주입될 예정
     private final Text leftScoreText, rightScoreText;
-    private double countDownTimer = 3.0;
-    private boolean isCounting = true;
-    private boolean isGameOver = false;
+    private Ball ball; // 이후 주입될 예정
+    private boolean isCounting;
+    private double countDownTimer;
+    private String countDownText;
+    private boolean isGameOver;
 
     public GameManager(Text leftScoreText, Text rightScoreText) {
         this.leftScoreText = leftScoreText;
         this.rightScoreText = rightScoreText;
+        resetGame();
     }
 
     public void setBall(Ball ball) {
@@ -18,22 +20,41 @@ public class GameManager {
         // 시작 전 카운트
         if (isCounting) {
             countDownTimer -= delta;
-            if (countDownTimer <= -0.5) {
+            int seconds = (int) Math.ceil(countDownTimer);
+            countDownText = String.valueOf(seconds);
+            if (countDownTimer <= 0) {
                 isCounting = false;
+                resetBall();
             }
-            return;
         }
 
-        if (ball.rect.x < 0) handleScore(rightScoreText, "Right");
-        else if (ball.rect.x + ball.rect.width > Constants.SCREEN_WIDTH) handleScore(leftScoreText, "Left");
+        if (ball.rect.x < 0) {
+            handleScore(rightScoreText, "Right");
+            startCountDown();
+        }
+        else if (ball.rect.x + ball.rect.width > Constants.SCREEN_WIDTH) {
+            handleScore(leftScoreText, "Left");
+            startCountDown();
+        }
+    }
+
+    private void startCountDown() {
+        isCounting = true;
+        countDownTimer = 3.0;
+        countDownText = "3";
     }
 
     private void resetBall() {
-        this.ball.rect.x = Constants.SCREEN_WIDTH / 2.0;
-        this.ball.rect.y = Constants.SCREEN_HEIGHT / 2.0;
+        ball.rect.x = Constants.SCREEN_WIDTH / 2.0;
+        ball.rect.y = Constants.SCREEN_HEIGHT / 2.0;
         ball.resetVelocity();
-        isCounting = true;
-        countDownTimer = 3.0;
+    }
+
+    public void resetGame() {
+        leftScoreText.text = "0";
+        rightScoreText.text = "0";
+        isGameOver = false;
+        startCountDown();
     }
 
     private void handleScore(Text scoreText, String winnerName) {
@@ -57,10 +78,6 @@ public class GameManager {
     }
 
     public String getCountDownText() {
-        int seconds = (int)Math.ceil(countDownTimer);
-        if (seconds > 0) {
-            return "" + seconds;
-        }
-        return "Start";
+        return countDownText;
     }
 }
