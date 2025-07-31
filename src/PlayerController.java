@@ -8,6 +8,7 @@ public class PlayerController implements Controller {
     private boolean isDashing = false;
     private double dashTime = 0.0;
     private double dashDirection = 0.0;
+    private double dashCoolTime = 0.0;
     private double verticalDirection = 0.0;
 
     public PlayerController(Rect rect, KL keyListener, GameManager gameManager) {
@@ -18,7 +19,7 @@ public class PlayerController implements Controller {
 
     @Override
     public void reset() {
-        this.rect.y = Constants.SCREEN_HEIGHT / 2.0;
+        this.rect.setY(Constants.SCREEN_HEIGHT / 2.0);
         this.isDashing = false;
         this.verticalDirection = 0.0;
     }
@@ -26,6 +27,14 @@ public class PlayerController implements Controller {
     @Override
     public void update(double delta) {
         if (gameManager.isCounting()) return;
+
+        if (dashCoolTime > 0.0) {
+            dashCoolTime -= delta;
+            if (dashCoolTime < 0.0) { // 쿨타임 음수 방지
+                dashCoolTime = 0.0;
+            }
+        }
+
         if (keyListener != null) { // Player 조작
             // 패들 이동 방향 플래그 설정
             if (keyListener.isKeyPressed(KeyEvent.VK_UP)) {
@@ -36,11 +45,12 @@ public class PlayerController implements Controller {
                 this.verticalDirection = 0.0;
             }
             // 대시 로직
-            if (keyListener.isKeyPressed(KeyEvent.VK_X) && !isDashing) {
+            if (keyListener.isKeyPressed(KeyEvent.VK_X) && !isDashing && dashCoolTime == 0.0) {
                 if (this.verticalDirection != 0) {
                     isDashing = true;
                     dashTime = 0.2;
                     dashDirection = this.verticalDirection;
+                    dashCoolTime = 3.0;
                 }
             }
 
@@ -68,14 +78,16 @@ public class PlayerController implements Controller {
     }
 
     public void moveUp(double delta) {
-        if (rect.y - Constants.PADDLE_SPEED * delta > 0) {
-            this.rect.y -= Constants.PADDLE_SPEED * delta;
+        if (rect.getY() - Constants.PADDLE_SPEED * delta > 0) {
+            double currentY = this.rect.getY() - Constants.PADDLE_SPEED * delta;
+            this.rect.setY(currentY);
         }
     }
 
     public void moveDown(double delta) {
-        if ((rect.y + Constants.PADDLE_SPEED * delta) + rect.height < Constants.SCREEN_HEIGHT) {
-            this.rect.y += Constants.PADDLE_SPEED * delta;
+        if ((rect.getY() + Constants.PADDLE_SPEED * delta) + rect.getHeight() < Constants.SCREEN_HEIGHT) {
+            double currentY = this.rect.getY() + Constants.PADDLE_SPEED * delta;
+            this.rect.setY(currentY);
         }
     }
 
@@ -83,20 +95,20 @@ public class PlayerController implements Controller {
         if (dashTime > 0) {
             double moveAmount = Constants.DASH_SPEED * delta * dashDirection;
             if (dashDirection < 0) { // 위로 대시
-                if (this.rect.y + moveAmount > 0) {
-                    this.rect.y += moveAmount;
+                if (this.rect.getY() + moveAmount > 0) {
+                    this.rect.setY(this.rect.getY() + moveAmount);
                 } else {
-                    this.rect.y = 0;
+                    this.rect.setY(0.0);
                 }
             } else { // 아래로 대시
-                if (this.rect.y + this.rect.height + moveAmount < Constants.SCREEN_HEIGHT) {
-                    this.rect.y += moveAmount;
+                if (this.rect.getY() + this.rect.getHeight() + moveAmount < Constants.SCREEN_HEIGHT) {
+                    this.rect.setY(this.rect.getY() + moveAmount);
                 } else {
-                    this.rect.y = Constants.SCREEN_HEIGHT - this.rect.height;
+                    this.rect.setY(Constants.SCREEN_HEIGHT - this.rect.getHeight());
                 }
             }
-            dashTime -= delta;
             System.out.println("Dash!");
+            dashTime -= delta;
         } else {
             isDashing = false;
         }

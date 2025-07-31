@@ -28,7 +28,7 @@ public class Ball {
     }
     private double calculateReflectionAngle(Rect paddle) {
         double relativeIntersectY = (paddle.getY() + (paddle.getHeight() / 2.0)) - (this.rect.getY() + (this.rect.getHeight() / 2.0));
-        double normalIntersectY = relativeIntersectY / (paddle.height/2.0);
+        double normalIntersectY = relativeIntersectY / (paddle.getHeight()/2.0);
         double theta = normalIntersectY * Constants.MAX_ANGLE;
 
         return Math.toRadians(theta);
@@ -43,6 +43,8 @@ public class Ball {
                 currentSpeed = Constants.MAX_BALL_SPEED;
             }
             System.out.println("smashedSpeed: " + currentSpeed);
+        } else {
+            currentSpeed += Constants.PADDLE_COLLISION_ACCELERATE;
         }
 
         System.out.println("currentSpeed: " + currentSpeed);
@@ -63,6 +65,9 @@ public class Ball {
 
     public void update(double delta, Controller leftController, Controller rightController) {
         if (gameManager.isCounting()) return; // 카운트다운 중에는 공 움직임 처리 안 함
+
+        vx *= (1.0 - Constants.AIR_DRAG_COEFFICIENT * delta);
+        vy *= (1.0 - Constants.AIR_DRAG_COEFFICIENT * delta);
 
         // x축 방향 확인
         if (vx < 0) {
