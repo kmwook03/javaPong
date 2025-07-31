@@ -12,7 +12,7 @@ public class AIController implements Controller {
 
     @Override
     public void reset() {
-        this.rect.y = Constants.SCREEN_HEIGHT / 2.0;
+        this.rect.setY(Constants.SCREEN_HEIGHT / 2.0);
     }
 
     @Override
@@ -22,9 +22,9 @@ public class AIController implements Controller {
             return;
         }
 
-        if (ball.y < this.rect.y) {
+        if (ball.getY() < this.rect.getY()) {
             this.verticalDirection = -1.0;
-        } else if (ball.y + ball.height > this.rect.y + this.rect.height) {
+        } else if (ball.getY() + ball.getHeight() > this.rect.getY() + this.rect.getHeight()) {
             this.verticalDirection = 1.0;
         } else {
             this.verticalDirection = 0.0;
@@ -37,15 +37,20 @@ public class AIController implements Controller {
         }
     }
 
+    @Override
+    public boolean isTryingToSmash() {
+        return false;
+    }
+
     public void moveUp(double delta) {
-        if (rect.y - Constants.PADDLE_SPEED * delta > 0) {
-            this.rect.y -= Constants.PADDLE_SPEED * delta;
+        if (rect.getY() - Constants.PADDLE_SPEED * delta > 0) {
+            this.rect.setY(this.rect.getY() - Constants.PADDLE_SPEED * delta);
         }
     }
 
     public void moveDown(double delta) {
-        if ((rect.y + Constants.PADDLE_SPEED * delta) + rect.height < Constants.SCREEN_HEIGHT) {
-            this.rect.y += Constants.PADDLE_SPEED * delta;
+        if ((rect.getY() + Constants.PADDLE_SPEED * delta) + rect.getHeight() < Constants.SCREEN_HEIGHT) {
+            this.rect.setY(this.rect.getY() + Constants.PADDLE_SPEED * delta);
         }
     }
 

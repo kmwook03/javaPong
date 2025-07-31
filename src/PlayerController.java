@@ -1,5 +1,4 @@
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class PlayerController implements Controller {
     public Rect rect;
@@ -57,7 +56,9 @@ public class PlayerController implements Controller {
         }
     }
 
+    @Override
     public boolean isTryingToSmash() {
+        System.out.println("Smash!");
         return keyListener.isKeyPressed(KeyEvent.VK_Z);
     }
 

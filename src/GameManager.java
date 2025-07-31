@@ -41,11 +41,11 @@ public class GameManager {
             }
         }
 
-        if (ball.rect.x < 0) {
+        if (ball.rect.getX() < 0) {
             handleScore(rightScoreText, "Right");
             startCountDown();
         }
-        else if (ball.rect.x + ball.rect.width > Constants.SCREEN_WIDTH) {
+        else if (ball.rect.getX() + ball.rect.getWidth() > Constants.SCREEN_WIDTH) {
             handleScore(leftScoreText, "Left");
             startCountDown();
         }
@@ -59,8 +59,8 @@ public class GameManager {
 
     private void resetBall() {
         if (ball != null) {
-            ball.rect.x = Constants.SCREEN_WIDTH / 2.0;
-            ball.rect.y = Constants.SCREEN_HEIGHT / 2.0;
+            ball.rect.setX(Constants.SCREEN_WIDTH / 2.0);
+            ball.rect.setY(Constants.SCREEN_HEIGHT / 2.0);
             ball.resetVelocity();
         }
     }

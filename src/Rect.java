@@ -3,8 +3,9 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
 public class Rect {
-    public double x, y, width, height;
-    public Color color;
+    private double x, y;
+    private final double width, height;
+    private final Color color;
 
     public Rect(double x, double y, double width, double height, Color color) {
         this.x = x;
@@ -13,6 +14,14 @@ public class Rect {
         this.height = height;
         this.color = color;
     }
+
+    public double getX() { return x; }
+    public double getY() { return y; }
+    public double getWidth() { return width; }
+    public double getHeight() { return height; }
+
+    public void setX(double x) { this.x = x; }
+    public void setY(double y) { this.y = y; }
 
     public void draw(Graphics2D g2) {
         g2.setColor(color);
