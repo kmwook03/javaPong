@@ -9,6 +9,7 @@ public class PlayerController implements Controller {
     private boolean isDashing = false;
     private double dashTime = 0.0;
     private double dashDirection = 0.0;
+    private double verticalDirection = 0.0;
 
     public PlayerController(Rect rect, KL keyListener, GameManager gameManager) {
         this.rect = rect;
@@ -20,29 +21,36 @@ public class PlayerController implements Controller {
     public void reset() {
         this.rect.y = Constants.SCREEN_HEIGHT / 2.0;
         this.isDashing = false;
+        this.verticalDirection = 0.0;
     }
 
     @Override
     public void update(double delta) {
         if (gameManager.isCounting()) return;
         if (keyListener != null) { // Player 조작
-            // 이동 로직
+            // 패들 이동 방향 플래그 설정
+            if (keyListener.isKeyPressed(KeyEvent.VK_UP)) {
+                this.verticalDirection = -1.0;
+            } else if (keyListener.isKeyPressed(KeyEvent.VK_DOWN)) {
+                this.verticalDirection = 1.0;
+            } else {
+                this.verticalDirection = 0.0;
+            }
+            // 대시 로직
             if (keyListener.isKeyPressed(KeyEvent.VK_X) && !isDashing) {
-                isDashing = true;
-                dashTime = 0.2; // 대시 지속 시간 (초)
-                if (keyListener.isKeyPressed(KeyEvent.VK_UP)) {
-                    dashDirection = -1.0;
-                } else {
-                    dashDirection = 1.0;
+                if (this.verticalDirection != 0) {
+                    isDashing = true;
+                    dashTime = 0.2;
+                    dashDirection = this.verticalDirection;
                 }
             }
 
             if (isDashing) {
                 dash(delta);
             } else {
-                if (keyListener.isKeyPressed(KeyEvent.VK_DOWN)) {
+                if (this.verticalDirection > 0) {
                     moveDown(delta);
-                } else if (keyListener.isKeyPressed(KeyEvent.VK_UP)) {
+                } else if (this.verticalDirection < 0) {
                     moveUp(delta);
                 }
             }
@@ -51,6 +59,11 @@ public class PlayerController implements Controller {
 
     public boolean isTryingToSmash() {
         return keyListener.isKeyPressed(KeyEvent.VK_Z);
+    }
+
+    @Override
+    public double getVerticalDirection() {
+        return this.verticalDirection;
     }
 
     public void moveUp(double delta) {

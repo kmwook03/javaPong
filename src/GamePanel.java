@@ -46,6 +46,7 @@ public class GamePanel extends JPanel implements Runnable, IPanel {
         playerController = new PlayerController(playerOne, keyListener, gameManager);
         aiController = new AIController(ai, ballRect, gameManager);
         gameManager.setController(playerController, aiController);
+
     }
 
     @Override
@@ -92,7 +93,7 @@ public class GamePanel extends JPanel implements Runnable, IPanel {
         gameManager.update(delta);
         playerController.update(delta);
         aiController.update(delta);
-        ball.update(delta, playerController);
+        ball.update(delta, playerController, aiController);
     }
 
     @Override
