@@ -1,6 +1,5 @@
 import javax.swing.*; // 좌측 상단 코너가 (0, 0)임.
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.Objects;
 
 public class MainMenuPanel extends JPanel implements Runnable, IPanel {
@@ -13,10 +12,6 @@ public class MainMenuPanel extends JPanel implements Runnable, IPanel {
     public ML mouseListener = new ML();
 
     private Thread menuThread;
-
-    public ML getMouseListener() {
-        return mouseListener;
-    }
 
     public MainMenuPanel(Runnable onStartGameCallback) {
         this.onStartGame = onStartGameCallback;
@@ -92,18 +87,6 @@ public class MainMenuPanel extends JPanel implements Runnable, IPanel {
                 System.exit(0);
             }
         }
-
-//        if (keyListener.isKeyPressed(KeyEvent.VK_ENTER)) {
-//            System.out.println("Start Game Clicked!");
-//            if (onStartGame != null) {
-//                onStartGame.run();
-//            }
-//        }
-//
-//        if (keyListener.isKeyPressed(KeyEvent.VK_ESCAPE)) {
-//            System.out.println("Exit Clicked!");
-//            System.exit(0);
-//        }
 
         updateHoverEffect();
     }

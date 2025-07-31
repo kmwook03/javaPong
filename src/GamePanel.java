@@ -4,7 +4,7 @@ import java.awt.*;
 public class GamePanel extends JPanel implements Runnable, IPanel {
 
     private Thread gameThread;
-    private final Runnable onGameOver;
+//    private final Runnable onGameOver;
     private double lastFrameTime;
 
     private final KL keyListener = new KL();
@@ -18,7 +18,7 @@ public class GamePanel extends JPanel implements Runnable, IPanel {
     private final GameManager gameManager;
 
     public GamePanel(Runnable onGameOverCallback) {
-        this.onGameOver = onGameOverCallback;
+//        this.onGameOver = onGameOverCallback;
 
         // 패널 설정
         this.setPreferredSize(new Dimension(Constants.SCREEN_WIDTH, Constants.SCREEN_HEIGHT));
@@ -46,6 +46,7 @@ public class GamePanel extends JPanel implements Runnable, IPanel {
         playerController = new PlayerController(playerOne, keyListener, gameManager);
         aiController = new AIController(ai, ballRect, gameManager);
         gameManager.setController(playerController, aiController);
+
     }
 
     @Override
@@ -92,7 +93,7 @@ public class GamePanel extends JPanel implements Runnable, IPanel {
         gameManager.update(delta);
         playerController.update(delta);
         aiController.update(delta);
-        ball.update(delta, playerController);
+        ball.update(delta, playerController, aiController);
     }
 
     @Override

@@ -18,7 +18,11 @@ public class Constants {
     public static final double PADDLE_SPEED = 350;
     public static final double DASH_SPEED = 900;
     public static final double BALL_SPEED = 400;
-    public static final double SMASHED_SPEED = 100;
+    public static final double PADDLE_COLLISION_ACCELERATE = 200;
+    public static final double SMASH_ACCELERATE = 400;
+    public static final double MAX_BALL_SPEED = 700;
+    public static final double AIR_DRAG_COEFFICIENT = 0.15;
+    public static final double WALL_DAMPING = 0.95;
     public static final double MAX_ANGLE = 45;
 
     // 수직 패딩
