@@ -25,6 +25,9 @@ public class Constants {
     public static final double WALL_DAMPING = 0.95;
     public static final double MAX_ANGLE = 45;
 
+    public static final double SMASH_DURATION = 0.1;
+    public static final double SMASH_DISTANCE = 30;
+
     // 수직 패딩
     public static final double HZ_PADDING = 40;
 

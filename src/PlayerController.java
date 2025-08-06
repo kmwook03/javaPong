@@ -11,6 +11,11 @@ public class PlayerController implements Controller {
     private double dashCoolTime = 0.0;
     private double verticalDirection = 0.0;
 
+    private boolean isSmashing = false;
+    private double smashTime = 0.0;
+    private double originalX;
+    private double smashCoolTime = 0.0;
+
     public PlayerController(Rect rect, KL keyListener, GameManager gameManager) {
         this.rect = rect;
         this.keyListener = keyListener;
@@ -22,6 +27,8 @@ public class PlayerController implements Controller {
         this.rect.setY(Constants.SCREEN_HEIGHT / 2.0);
         this.isDashing = false;
         this.verticalDirection = 0.0;
+        this.isSmashing = false;
+        this.smashTime = 0.0;
     }
 
     @Override
@@ -32,6 +39,13 @@ public class PlayerController implements Controller {
             dashCoolTime -= delta;
             if (dashCoolTime < 0.0) { // 쿨타임 음수 방지
                 dashCoolTime = 0.0;
+            }
+        }
+
+        if (smashCoolTime > 0.0) {
+            smashCoolTime -= delta;
+            if (smashCoolTime < 0.0) {
+                smashCoolTime = 0.0;
             }
         }
 
@@ -53,6 +67,13 @@ public class PlayerController implements Controller {
                     dashCoolTime = 3.0;
                 }
             }
+            // 스매시 로직
+            if (keyListener.isKeyPressed(KeyEvent.VK_Z) && !isSmashing && smashCoolTime == 0.0) {
+                isSmashing = true;
+                smashTime = Constants.SMASH_DURATION;
+                originalX = this.rect.getX();
+                smashCoolTime = 3.0;
+            }
 
             if (isDashing) {
                 dash(delta);
@@ -63,13 +84,17 @@ public class PlayerController implements Controller {
                     moveUp(delta);
                 }
             }
+
+            if (isSmashing) {
+                smash(delta);
+            }
         }
     }
 
     @Override
     public boolean isTryingToSmash() {
         System.out.println("Smash!");
-        return keyListener.isKeyPressed(KeyEvent.VK_Z);
+        return isSmashing;
     }
 
     @Override
@@ -111,6 +136,23 @@ public class PlayerController implements Controller {
             dashTime -= delta;
         } else {
             isDashing = false;
+        }
+    }
+
+    public void smash(double delta) {
+        if (smashTime > 0) {
+            double halfSmashTime = Constants.SMASH_DURATION / 2.0;
+            double progress;
+            if (smashTime > halfSmashTime) {
+                progress = (Constants.SMASH_DURATION - smashTime) / halfSmashTime;
+            } else {
+                progress = smashTime / halfSmashTime;
+            }
+            this.rect.setX(originalX + Constants.SMASH_DISTANCE * progress);
+            smashTime -= delta;
+        } else {
+            isSmashing = false;
+            this.rect.setX(originalX);
         }
     }
 }
